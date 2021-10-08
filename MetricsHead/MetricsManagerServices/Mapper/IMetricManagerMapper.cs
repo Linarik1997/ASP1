@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MetricsManagerServices.Mapper
 {
-    interface IMapper
+    public interface IMetricManagerMapper
     {
         /// <summary>
         /// Провайдер конфигурации для Mapper

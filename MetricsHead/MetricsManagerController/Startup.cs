@@ -1,20 +1,19 @@
-using MetricsManagerServices;
+using Core;
+using Core.Interfaces;
+using Core.Models;
+using DB.DAL.Repositories;
+using MetricsManagerServices.AgentsManagerService;
 using MetricsManagerServices.ManagerMetricsServices;
-using MetricsManagerServices.Models.MetricsDto;
+using MetricsManagerServices.Mapper;
+using MetricsManagerServices.MetricsManagerMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace MetricsManagerController
 {
@@ -32,7 +31,16 @@ namespace MetricsManagerController
         {
             services.AddControllers();
             services.AddHttpClient();
+            // Инжекция контекста БД
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
+                 optionsBuilder => optionsBuilder.MigrationsAssembly("Core")));
+
             services.AddScoped<ManagerCpuMetricsService>();
+            services.AddScoped<IMetricManagerMapper, MetricsManagerMapper>();
+            services.AddScoped<IDbRepository<AgentInfo>, DbRepository<AgentInfo>>();
+            services.AddScoped<AgentManager>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MetricsManagerController", Version = "v1" });

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace MetricsManagerServices.Models.Dto
 {
-    public abstract class BaseDto
+    public abstract class BaseDto<TResponse>
     {
-        public string AgentName;
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public List<TResponse> Content { get; set; }
     }
 }
